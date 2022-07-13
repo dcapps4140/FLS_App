@@ -1,0 +1,524 @@
+﻿----------------------- Page 1-----------------------
+
+Sheet4 - 1 
+  
+
+Option Explicit 
+
+Private Sub cmdDelete_Click() 
+
+    Dim msgValue As VbMsgBoxResult 
+     
+    'msgValue = MsgBox("Do you want to delete the record?", vbYesNo + vbQuestion, "Delete") 
+    msgValue = MsgBox("Delete Not Available", vbOKOnly + vbExclamation, "Delete") 
+     
+    'If msgValue = vbYes Then 
+    ' 
+    '    Call DeleteRecord 
+    ' 
+    'End If 
+
+End Sub 
+
+Private Sub cmdModify_Click() 
+     
+    Dim msgValue As VbMsgBoxResult 
+     
+    msgValue = MsgBox("Do you want to modify the record?", vbYesNo + vbQuestion, "Modify") 
+     
+    If msgValue = vbYes Then 
+     
+        Call Modify 
+     
+    End If 
+     
+
+End Sub 
+
+Private Sub cmdReset_Click() 
+
+    Dim msgValue As VbMsgBoxResult 
+     
+    msgValue = MsgBox("Do you want to reset the Form?", vbYesNo + vbQuestion, "Reset") 
+     
+    If msgValue = vbYes Then 
+     
+        Call Reset 
+     
+    End If 
+     
+     
+End Sub 
+
+Private Sub cmdSave_Click() 
+     
+    If Validate = True Then 
+     
+        Dim msgValue As VbMsgBoxResult 
+         
+        msgValue = MsgBox("Do you want to save the data?", vbYesNo + vbQuestion, "Save") 
+         
+            If msgValue = vbYes Then 
+             
+                Call Save 
+                Call Reset 
+             
+            End If 
+     
+    End If 
+     
+End Sub 
+
+Private Sub Worksheet_SelectionChange(ByVal Target As Range) 
+
+End Sub 
+
+----------------------- Page 2-----------------------
+
+Sheet5 - 1 
+  
+Private Sub TextBox1_Change() 
+'= TextBox1.Value 
+End Sub 
+
+Public Sub Worksheet_Activate() 
+ScrollBar1.Max = Sheets("Database").Range("A2668").Text 
+End Sub 
+
+----------------------- Page 3-----------------------
+
+ThisWorkbook - 1 
+  
+Private Sub Workbook_Open() 
+
+End Sub 
+
+Private Sub Workbook_SheetSelectionChange(ByVal Sh As Object, ByVal Target As Range) 
+
+End Sub 
+
+----------------------- Page 4-----------------------
+
+Module1 - 1 
+  
+Option Explicit 
+
+Function Validate() As Boolean 
+' CODE VERIFIES VALUES FOR SOME OF THE DATA 
+
+    Dim frm As Worksheet 
+     
+    Sheets("FORM").Select 
+    ActiveSheet.Unprotect 
+
+     
+    Set frm = ThisWorkbook.Sheets("Form") 
+     
+    Validate = True 
+     
+    With frm 
+     
+        .Range("L5").Interior.Color = xlNone 
+        .Range("L6").Interior.Color = xlNone 
+        .Range("L7").Interior.Color = xlNone 
+        .Range("L8").Interior.Color = xlNone 
+        .Range("L9").Interior.Color = xlNone 
+        .Range("L10").Interior.Color = xlNone 
+        .Range("L11").Interior.Color = xlNone 
+     
+    End With 
+     
+        'Validating Tick Number 
+     
+    If Trim(frm.Range("V23").Value) <> 10 Then 
+        MsgBox "Tick Number is incorrect.", vbOKOnly + vbExclamation, "Tick Number" 
+        Validate = False 
+        Exit Function 
+    End If 
+     
+    
+
+    Sheets("FORM").Select 
+    ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True 
+
+End Function 
+
+Sub Reset() 
+' CODE CLEARS THE FORM AND REFRESHES FOR NEXT ACTION 
+
+    Sheets("FORM").Select 
+    ActiveSheet.Unprotect 
+
+    With Sheets("Form") 
+             
+         .Range("L5").Interior.Color = xlNone 
+         .Range("L5").Value = "" 
+             
+         .Range("L6").Interior.Color = xlNone 
+         .Range("L6").Value = "" 
+          
+         .Range("L7").Interior.Color = xlNone 
+         .Range("L7").Value = "" 
+          
+         .Range("L8").Interior.Color = xlNone 
+         .Range("L8").Value = "" 
+          
+         .Range("L9").Interior.Color = xlNone 
+         .Range("L9").Value = "" 
+          
+         .Range("L10").Interior.Color = xlNone 
+         .Range("L10").Value = "" 
+          
+         .Range("L11").Interior.Color = xlNone 
+
+----------------------- Page 5-----------------------
+
+Module1 - 2 
+  
+         .Range("L11").Value = "" 
+          
+         .Range("L13:N22").Interior.Color = xlNone 
+         .Range("L13:N22").Value = "" 
+          
+     
+    End With 
+     
+    Sheets("FORM").Select 
+    ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True 
+     
+    'Range("A1").Select 
+    Range("L6").Select 
+
+End Sub 
+
+Sub Save() 
+    ' CODE WRITES THE UPDATE VALUES TO THE DATABASE TAB IN THE WORKBOOK 
+
+    Dim frm As Worksheet 
+    Dim Database As Worksheet 
+     
+     
+    Dim iRow As Long 
+    Dim iSerial As Variant 
+     
+    Set frm = ThisWorkbook.Sheets("Form") 
+     
+    Set Database = ThisWorkbook.Sheets("Database") 
+
+     
+    If Trim(frm.Range("M1").Value) = "" Then 
+     
+        iRow = Database.Range("A" & Application.Rows.Count).End(xlUp).Row + 1 
+         
+        MsgBox (iRow) 
+         
+        If iRow = 2 Then 
+         
+            iSerial = 1 
+             
+        Else 
+         
+            iSerial = Database.Cells(iRow - 1, 1).Value + 1 
+         
+        End If 
+         
+    Else 
+     
+        iRow = frm.Range("L1").Value 
+        iSerial = frm.Range("M1").Value 
+     
+    End If 
+     
+    With Database 
+     
+        .Cells(iRow, 3).Value = frm.Range("L7").Value 
+         
+        .Cells(iRow, 8).Value = frm.Range("O13").Value 
+         
+        .Cells(iRow, 9).Value = frm.Range("O14").Value 
+         
+        .Cells(iRow, 10).Value = frm.Range("O15").Value 
+         
+        .Cells(iRow, 11).Value = frm.Range("O16").Value 
+         
+        .Cells(iRow, 12).Value = frm.Range("O17").Value 
+         
+        .Cells(iRow, 13).Value = frm.Range("O18").Value 
+                 
+        .Cells(iRow, 14).Value = frm.Range("O19").Value 
+         
+
+----------------------- Page 6-----------------------
+
+Module1 - 3 
+  
+        .Cells(iRow, 15).Value = frm.Range("O20").Value 
+         
+        .Cells(iRow, 16).Value = frm.Range("O21").Value 
+         
+        .Cells(iRow, 17).Value = frm.Range("O22").Value 
+     
+    End With 
+     
+     
+    'frm.Range("L1").Value = "" 
+    'frm.Range("M1").Value = "" 
+     
+     
+
+End Sub 
+
+Sub Modify() 
+' CODE PULLS DATA FROM DATABASE AND LOADS INTO FORM TAB FOR MANIPULATION 
+
+    Dim iRow As Long 
+    Dim iSerial As Integer 
+     
+    Sheets("FORM").Select 
+    ActiveSheet.Unprotect 
+     
+    iSerial = Application.InputBox("Please enter Serial Number to make modification.", "Modify", , , , 
+ , , 2) 
+     
+    On Error Resume Next 
+     
+    iRow = Application.WorksheetFunction.IfError(Application.WorksheetFunction.Match(iSerial, Sheets(" 
+Database").Range("A:A"), 0), 0) 
+     
+    On Error GoTo 0 
+     
+    If iRow = 0 Then 
+     
+        MsgBox "No record found.", vbOKOnly + vbCritical, "No Record" 
+        Exit Sub 
+         
+    End If 
+     
+     
+    Sheets("Form").Range("L1").Value = iRow 
+    Sheets("Form").Range("M1").Value = iSerial 
+       
+    Sheets("Form").Range("L5").Value = Sheets("Database").Cells(iRow, 1).Value 
+    Sheets("Form").Range("L6").Value = Sheets("Database").Cells(iRow, 2).Value 
+    Sheets("Form").Range("L7").Value = Sheets("Database").Cells(iRow, 3).Value 
+    Sheets("Form").Range("L8").Value = Sheets("Database").Cells(iRow, 4).Value 
+    Sheets("Form").Range("L9").Value = Sheets("Database").Cells(iRow, 5).Value 
+    Sheets("Form").Range("L10").Value = Sheets("Database").Cells(iRow, 6).Value 
+    Sheets("Form").Range("L11").Value = Sheets("Database").Cells(iRow, 7).Value 
+    Sheets("Form").Range("L12").Value = Sheets("Database").Cells(iRow, 8).Value 
+    Sheets("Form").Range("L13").Value = Sheets("Database").Cells(iRow, 9).Value 
+    Sheets("Form").Range("L14").Value = Sheets("Database").Cells(iRow, 10).Value 
+    Sheets("Form").Range("L15").Value = Sheets("Database").Cells(iRow, 11).Value 
+     
+    Sheets("FORM").Select 
+    ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True 
+
+End Sub 
+
+Sub DeleteRecord() 
+' CODE DELETES RECORD FROM DATABASE, THERE IS  NO RECOVERY FROM THIS!!!!!!!!!!!!!!!!! 
+
+    Dim iRow As Long 
+    Dim iSerial As Long 
+     
+     
+    iSerial = Application.InputBox("Please enter S.No. to delete the recor.", "Delete", , , , , , 1) 
+
+----------------------- Page 7-----------------------
+
+Module1 - 4 
+  
+     
+    On Error Resume Next 
+     
+    iRow = Application.WorksheetFunction.IfError _ 
+    (Application.WorksheetFunction.Match(iSerial, Sheets("Database").Range("A:A"), 0), 0) 
+     
+    On Error GoTo 0 
+     
+    If iRow = 0 Then 
+     
+        MsgBox "No record found.", vbOKOnly + vbCritical, "No Record" 
+        Exit Sub 
+         
+    End If 
+     
+     
+    Sheets("Database").Cells(iRow, 1).EntireRow.Delete shift:=xlUp 
+
+End Sub 
+
+----------------------- Page 8-----------------------
+
+Module2 - 1 
+  
+
+Sub Test() 
+    Dim Sh As Worksheet 
+    Dim Bar As Scrollbar 
+    For Each Sh In ThisWorkbook.Worksheets 
+        For Each Bar In Sh.ScrollBars 
+                Bar.Max = Sh.Range(Bar.LinkedCell).Offset(, 2).Value 
+        Next Bar 
+    Next Sh 
+End Sub 
+
+----------------------- Page 9-----------------------
+
+Module3 - 1 
+  
+Sub Sheet_Protection() 
+' 
+' Sheet_Protection Macro 
+' 
+
+' 
+    Sheets("FORM").Select 
+    ActiveSheet.Unprotect 
+    Sheets("FORM").Select 
+    ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True 
+End Sub 
+Sub Print_ICA_Reports() 
+' 
+' Print_Reports Macro 
+' 
+
+' 
+    Call PT_Refresh 
+    Sheets("ICA").Select 
+    ActiveWindow.SelectedSheets.PrintOut Copies:=1, Collate:=True, IgnorePrintAreas:=False 
+     
+     
+End Sub 
+Sub Print_IFI_Reports() 
+' 
+' Print_Reports Macro 
+' 
+
+' 
+    Call PT_Refresh 
+    Sheets("IFI").Select 
+    ActiveWindow.SelectedSheets.PrintOut Copies:=1, Collate:=True, IgnorePrintAreas:=False 
+     
+     
+End Sub 
+Sub Print_ISR_Reports() 
+' 
+' Print_Reports Macro 
+' 
+
+' 
+    Call PT_Refresh 
+    Sheets("ISR").Select 
+    ActiveWindow.SelectedSheets.PrintOut Copies:=1, Collate:=True, IgnorePrintAreas:=False 
+     
+     
+End Sub 
+Sub Print_VD_Reports() 
+' 
+' Print_Reports Macro 
+' 
+
+' 
+    Call PT_Refresh 
+    Sheets("VD").Select 
+    ActiveWindow.SelectedSheets.PrintOut Copies:=1, Collate:=True, IgnorePrintAreas:=False 
+     
+     
+End Sub 
+
+Sub Print_VML_Reports() 
+' 
+' Print_Reports Macro 
+' 
+
+' 
+    Call PT_Refresh 
+    Sheets("VML").Select 
+    ActiveWindow.SelectedSheets.PrintOut Copies:=1, Collate:=True, IgnorePrintAreas:=False 
+     
+     
+End Sub 
+
+----------------------- Page 10-----------------------
+
+Module3 - 2 
+  
+Sub PT_Refresh() 
+' 
+' PT_Refresh Macro 
+' 
+
+' 
+    Range("A7").Select 
+    ActiveWorkbook.RefreshAll 
+End Sub 
+
+----------------------- Page 11-----------------------
+
+Sheet11 - 1 
+  
+Option Explicit 
+
+Private Sub cmdDelete_Click() 
+
+    Dim msgValue As VbMsgBoxResult 
+     
+    msgValue = MsgBox("Do you want to delete the record?", vbYesNo + vbQuestion, "Delete") 
+     
+    If msgValue = vbYes Then 
+     
+        Call DeleteRecord 
+     
+    End If 
+
+End Sub 
+
+Private Sub cmdModify_Click() 
+     
+    Dim msgValue As VbMsgBoxResult 
+     
+    msgValue = MsgBox("Do you want to modify the record?", vbYesNo + vbQuestion, "Modify") 
+     
+    If msgValue = vbYes Then 
+     
+        Call Modify 
+     
+    End If 
+     
+
+End Sub 
+
+Private Sub cmdReset_Click() 
+
+    Dim msgValue As VbMsgBoxResult 
+     
+    msgValue = MsgBox("Do you want to reset the Form?", vbYesNo + vbQuestion, "Reset") 
+     
+    If msgValue = vbYes Then 
+     
+        Call Reset 
+     
+    End If 
+     
+     
+End Sub 
+
+Private Sub cmdSave_Click() 
+     
+    If Validate = True Then 
+     
+        Dim msgValue As VbMsgBoxResult 
+         
+        msgValue = MsgBox("Do you want to save the data?", vbYesNo + vbQuestion, "Save") 
+         
+            If msgValue = vbYes Then 
+             
+                Call Save 
+                Call Reset 
+             
+            End If 
+     
+    End If 
+     
+End Sub 
